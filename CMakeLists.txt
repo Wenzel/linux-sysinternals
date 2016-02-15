@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 #-----------------------------------------------------------------------------
 # include(static_analysis)
 # include(doxygen)
-include(ccache)
+# include(ccache)
 #-----------------------------------------------------------------------------
 #                           GENERAL CONFIGURATION
 #-----------------------------------------------------------------------------
