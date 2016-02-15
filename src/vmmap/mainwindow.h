@@ -35,8 +35,11 @@ private:
     MapDetailTreeModel* m_map_detail_model;
     QSortFilterProxyModel* m_proxy_map_detail_model;
 
-private slots:
+public slots:
     void selectProcess();
+
+private slots:
+
     void showProcessMap(int pid);
     void categorySelected(const QModelIndex& index);
 
