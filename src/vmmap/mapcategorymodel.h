@@ -21,7 +21,6 @@ public:
     QString categoryAt(int row) const;
 
 private:
-    void addMap(const QString& category, const MMap& map);
 
     QList<QList<QString>*> m_data;
     QStringList m_headers;

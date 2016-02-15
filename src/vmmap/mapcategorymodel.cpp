@@ -76,11 +76,6 @@ QVariant MapCategoryModel::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-void MapCategoryModel::addMap(const QString &category, const MMap &map)
-{
-
-}
-
 QString MapCategoryModel::categoryAt(int row) const
 {
     return m_data.at(row)->at(0);
