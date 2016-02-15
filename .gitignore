@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# build dir
+_build/
+
+# IDE
+CMakeLists.txt.user
