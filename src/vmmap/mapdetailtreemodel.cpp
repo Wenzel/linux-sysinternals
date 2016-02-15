@@ -20,6 +20,7 @@ QColor MapDetailTreeModel::getCategoryColor(const QString &category)
 }
 
 MapDetailTreeModel::MapDetailTreeModel(const QStringList& headers, const std::vector<MMap> &maps, QObject* parent)
+    : QAbstractItemModel(parent)
 {
     // convert QStringList to QList<QVariant>
     QList<QVariant> hdr;
@@ -124,9 +125,10 @@ QVariant MapDetailTreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+
     if (role == Qt::DisplayRole)
         return item->data(index.column());
-    else if (role == Qt::BackgroundRole)
+    else if (role == Qt::BackgroundColorRole)
     {
         QString category = item->data(1).toString();
         return QVariant(MapDetailTreeModel::getCategoryColor(category));
