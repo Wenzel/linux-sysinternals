@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_process_treemodel = new ProcessTreeModel(this);
     ui->treeView_process->setModel(m_process_treemodel);
+    connect(ui->treeView_process, SIGNAL(expanded(QModelIndex)), this, SLOT(adjustColumnSize(QModelIndex)));
+    connect(ui->treeView_process, SIGNAL(collapsed(QModelIndex)), this, SLOT(adjustColumnSize(QModelIndex)));
 }
 
 MainWindow::~MainWindow()
@@ -38,4 +40,12 @@ void MainWindow::center()
             qApp->desktop()->availableGeometry()
         )
     );
+}
+
+void MainWindow::adjustColumnSize(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    ui->treeView_process->resizeColumnToContents(0);
 }
