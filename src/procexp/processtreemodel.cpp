@@ -111,7 +111,6 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
 TreeItem* ProcessTreeModel::insertProcess(int pid)
 {
     ProcessInfo pinfo = ProcessInfo(pid);
-    std::cout << pid << ", " << pinfo.ppid() << std::endl;
     // look for parent in our tree
     int ppid = pinfo.ppid();
 
