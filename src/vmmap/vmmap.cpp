@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    MainWindow w;
+    MainWindow w(nullptr);
     w.show();
     w.selectProcess();
 

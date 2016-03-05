@@ -6,7 +6,11 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_select_process_view(nullptr)
+    m_select_process_view(nullptr),
+    m_pinfo(nullptr),
+    m_map_category_model(nullptr),
+    m_map_detail_model(nullptr),
+    m_proxy_map_detail_model(nullptr)
 {
     ui->setupUi(this);
     center();
@@ -18,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_select_process_view;
+    delete m_pinfo;
+    delete m_map_category_model;
+    delete m_map_detail_model;
+    delete m_proxy_map_detail_model;
 }
 
 void MainWindow::center()
