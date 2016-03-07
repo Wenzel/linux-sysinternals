@@ -17,11 +17,23 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTreeView" name="treeView_process">
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="indentation">
+       <number>20</number>
+      </property>
       <property name="rootIsDecorated">
        <bool>true</bool>
       </property>
       <attribute name="headerDefaultSectionSize">
        <number>150</number>
+      </attribute>
+      <attribute name="headerMinimumSectionSize">
+       <number>19</number>
       </attribute>
      </widget>
     </item>
