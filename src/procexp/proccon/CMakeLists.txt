@@ -1,10 +1,11 @@
 set(PROCCON_SRC_DBUS "")
+set(CONNECTOR_XML_PATH "${CMAKE_CURRENT_BINARY_DIR}/connector.xml")
 
 # .h -> xml
-qt5_generate_dbus_interface(connector.h)
+qt5_generate_dbus_interface(connector.h ${CONNECTOR_XML_PATH})
 # .xml -> adapter class
 qt5_add_dbus_adaptor(PROCCON_SRC_DBUS
-    connector.xml
+    ${CONNECTOR_XML_PATH}
     connector.h # parentheader
     Connector # classname
     ConnectorAdapter # [basename]
@@ -12,10 +13,9 @@ qt5_add_dbus_adaptor(PROCCON_SRC_DBUS
 )
 # .xml -> interface class
 qt5_add_dbus_interface(PROCCON_SRC_DBUS
-    connector.xml
+    ${CONNECTOR_XML_PATH}
     ConnectorInterface
 )
-
 
 add_executable(proccon
     proccon.cpp
