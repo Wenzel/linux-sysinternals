@@ -1,4 +1,3 @@
-set(PROCCON_SRC_DBUS "")
 set(CONNECTOR_XML_PATH "${CMAKE_CURRENT_BINARY_DIR}/connector.xml")
 
 # .h -> xml
@@ -28,3 +27,6 @@ target_link_libraries(proccon
     Qt5::Core
     Qt5::DBus
 )
+
+# sent back to parent cmakelists
+set(PROCCON_SRC_DBUS ${PROCCON_SRC_DBUS} PARENT_SCOPE)

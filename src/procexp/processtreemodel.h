@@ -5,9 +5,15 @@
 #include <QString>
 #include <QVariant>
 #include <QModelIndex>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 
 #include "treeitem.h"
 #include "sysinfo.h"
+#include "proccon/ConnectorInterface.h"
+
+#define CONNECTOR_SERVICE "org.proccon"
+#define CONNECTOR_PATH "/"
 
 class ProcessTreeModel : public QAbstractItemModel
 {
@@ -29,6 +35,8 @@ public:
 private:
     TreeItem *insertProcess(int pid);
 
+    // properties
+    org::proccon* m_connector;
     TreeItem *m_root;
 };
 

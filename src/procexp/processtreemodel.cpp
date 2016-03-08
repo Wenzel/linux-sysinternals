@@ -15,6 +15,8 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
     {
         insertProcess(pid);
     }
+
+    m_connector = new org::proccon(CONNECTOR_SERVICE, CONNECTOR_PATH, QDBusConnection::sessionBus(), this);
 }
 
 ProcessTreeModel::~ProcessTreeModel()
