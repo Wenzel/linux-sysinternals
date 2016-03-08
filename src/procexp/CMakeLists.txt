@@ -1,14 +1,12 @@
 add_subdirectory(proccon)
 
-
-include_directories(proccon)
 add_executable(procexp
     procexp.cpp
     mainwindow.cpp
     mainwindow.ui
     processtreemodel.cpp
     treeitem.cpp
-    ${PROCCON_SRC_DBUS}
+    proccon/ConnectorInterface.cpp
 )
 
 target_link_libraries(procexp
