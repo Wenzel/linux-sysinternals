@@ -1,3 +1,5 @@
+add_subdirectory(proccon)
+
 add_executable(procexp
     procexp.cpp
     mainwindow.cpp
