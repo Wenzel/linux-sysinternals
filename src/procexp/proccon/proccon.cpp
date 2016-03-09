@@ -1,5 +1,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
+#include <iostream>
+#include <unistd.h>
 
 #include "procconnector.h"
 #include "connector.h"
@@ -17,6 +19,7 @@ void handler(struct proc_event event)
     case event.PROC_EVENT_NONE:
         break;
     case event.PROC_EVENT_FORK:
+        std::cout << event.event_data.fork.child_pid << std::endl;
         emit iface->fork(
                event.event_data.fork.parent_pid,
                event.event_data.fork.parent_tgid,
@@ -56,7 +59,7 @@ void handler(struct proc_event event)
 
 int main(int argc, char* argv[])
 {
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = QDBusConnection::systemBus();
 
     Connector* conn = new Connector();
     ConnectorAdapter* adapter = new ConnectorAdapter(conn);

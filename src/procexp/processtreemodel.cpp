@@ -16,7 +16,10 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
         insertProcess(pid);
     }
 
-    m_connector = new org::proccon(CONNECTOR_SERVICE, CONNECTOR_PATH, QDBusConnection::sessionBus(), this);
+    QDBusConnection connection = QDBusConnection::systemBus();
+
+    m_connector = new org::proccon(CONNECTOR_SERVICE, CONNECTOR_PATH, connection, this);
+    connect(m_connector, SIGNAL(fork(int,int,int,int)), this, SLOT(processForked(int,int,int,int)));
 }
 
 ProcessTreeModel::~ProcessTreeModel()
@@ -131,4 +134,9 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
     TreeItem* item = new TreeItem(data);
     parent->appendChild(item);
     return item;
+}
+
+void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid)
+{
+    std::cout << "process forked " << child_pid << std::endl;
 }

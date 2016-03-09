@@ -18,7 +18,7 @@
 
 add_executable(proccon
     proccon.cpp
-    connector.h
+    connector.cpp
     ConnectorAdapter.cpp
     ConnectorInterface.cpp
 )

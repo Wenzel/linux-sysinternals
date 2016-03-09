@@ -38,6 +38,9 @@ private:
     // properties
     org::proccon* m_connector;
     TreeItem *m_root;
+
+private slots:
+    void processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid);
 };
 
 #endif // PROCESSTREEMODEL_H

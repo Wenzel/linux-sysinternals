@@ -8,6 +8,10 @@ class Connector : public QObject
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.proccon")
 
+public:
+    Connector(QObject* parent = 0);
+    ~Connector();
+
 signals:
     void fork(int parent_pid, int parent_tgid, int child_pid, int child_tgid);
     void exec(int process_pid, int process_tgid);
