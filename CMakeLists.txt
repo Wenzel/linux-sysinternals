@@ -40,6 +40,7 @@ endif()
 #                               SOURCES
 #-----------------------------------------------------------------------------
 add_subdirectory(src)
+add_subdirectory(tests)
 # include(uninstall)
 # add_subdirectory("${CMAKE_SOURCE_DIR}/cmake/cpack") # enable packaging with CPack
 #-----------------------------------------------------------------------------

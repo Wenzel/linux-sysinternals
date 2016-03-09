@@ -16,7 +16,7 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
         insertProcess(pid);
     }
 
-    QDBusConnection connection = QDBusConnection::systemBus();
+    QDBusConnection connection = QDBusConnection::sessionBus();
 
     m_helper = new com::procexp::helper(CONNECTOR_SERVICE, CONNECTOR_PATH, connection, this);
     connect(m_helper, SIGNAL(fork(int,int,int,int)), this, SLOT(processForked(int,int,int,int)));

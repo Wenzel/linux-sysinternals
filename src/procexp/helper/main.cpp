@@ -59,7 +59,7 @@ void handler(struct proc_event event)
 
 int main(int argc, char* argv[])
 {
-    QDBusConnection connection = QDBusConnection::systemBus();
+    QDBusConnection connection = QDBusConnection::sessionBus();
 
     ProcexpHelper* conn = new ProcexpHelper();
     ProcexpHelperAdaptor* adaptor = new ProcexpHelperAdaptor(conn);
@@ -72,7 +72,13 @@ int main(int argc, char* argv[])
 
     iface = new com::procexp::helper(CONNECTOR_SERVICE, CONNECTOR_PATH, connection);
 
-    ProcConnector connector = ProcConnector();
-    connector.addCallback(handler);
-    connector.listen();
+    while(1)
+    {
+        emit iface->fork(1, 2, 3, 4);
+        sleep(2);
+    }
+
+    // ProcConnector connector = ProcConnector();
+    // connector.addCallback(handler);
+    // connector.listen();
 }
