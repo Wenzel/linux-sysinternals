@@ -10,9 +10,9 @@
 
 #include "treeitem.h"
 #include "sysinfo.h"
-#include "proccon/ConnectorInterface.h"
+#include "helper/ProcexpHelperInterface.h"
 
-#define CONNECTOR_SERVICE "org.proccon"
+#define CONNECTOR_SERVICE "com.procexp.helper"
 #define CONNECTOR_PATH "/"
 
 class ProcessTreeModel : public QAbstractItemModel
@@ -36,7 +36,7 @@ private:
     TreeItem *insertProcess(int pid);
 
     // properties
-    org::proccon* m_connector;
+    com::procexp::helper* m_helper;
     TreeItem *m_root;
 
 private slots:

@@ -18,14 +18,16 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
 
     QDBusConnection connection = QDBusConnection::systemBus();
 
-    m_connector = new org::proccon(CONNECTOR_SERVICE, CONNECTOR_PATH, connection, this);
-    connect(m_connector, SIGNAL(fork(int,int,int,int)), this, SLOT(processForked(int,int,int,int)));
+    m_helper = new com::procexp::helper(CONNECTOR_SERVICE, CONNECTOR_PATH, connection, this);
+    connect(m_helper, SIGNAL(fork(int,int,int,int)), this, SLOT(processForked(int,int,int,int)));
 }
 
 ProcessTreeModel::~ProcessTreeModel()
 {
     if (m_root != nullptr)
         delete m_root;
+    if (m_helper != nullptr)
+        delete m_helper;
 }
 
 QVariant ProcessTreeModel::headerData(int section, Qt::Orientation orientation, int role) const

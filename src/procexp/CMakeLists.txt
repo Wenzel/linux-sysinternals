@@ -1,4 +1,4 @@
-add_subdirectory(proccon)
+add_subdirectory(helper)
 
 add_executable(procexp
     procexp.cpp
@@ -6,11 +6,11 @@ add_executable(procexp
     mainwindow.ui
     processtreemodel.cpp
     treeitem.cpp
-    proccon/ConnectorInterface.cpp
 )
 
 target_link_libraries(procexp
     sysinfo 
+    helper
     Qt5::Widgets
     Qt5::DBus
 )

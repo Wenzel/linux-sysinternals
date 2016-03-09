@@ -4,14 +4,14 @@
 #include <unistd.h>
 
 #include "procconnector.h"
-#include "connector.h"
-#include "ConnectorAdapter.h"
-#include "ConnectorInterface.h"
+#include "procexphelper.h"
+#include "ProcexpHelperAdaptor.h"
+#include "ProcexpHelperInterface.h"
 
-#define CONNECTOR_SERVICE "org.proccon"
+#define CONNECTOR_SERVICE "com.procexp.helper"
 #define CONNECTOR_PATH "/"
 
-static org::proccon* iface = nullptr;
+static com::procexp::helper* iface = nullptr;
 
 void handler(struct proc_event event)
 {
@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
 {
     QDBusConnection connection = QDBusConnection::systemBus();
 
-    Connector* conn = new Connector();
-    ConnectorAdapter* adapter = new ConnectorAdapter(conn);
+    ProcexpHelper* conn = new ProcexpHelper();
+    ProcexpHelperAdaptor* adaptor = new ProcexpHelperAdaptor(conn);
 
     if (!connection.registerService(CONNECTOR_SERVICE))
         qFatal("Could not register the service");
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
     if (!connection.registerObject(CONNECTOR_PATH, conn))
         qFatal("Could not register the connector object");
 
-    iface = new org::proccon(CONNECTOR_SERVICE, CONNECTOR_PATH, connection);
+    iface = new com::procexp::helper(CONNECTOR_SERVICE, CONNECTOR_PATH, connection);
 
     ProcConnector connector = ProcConnector();
     connector.addCallback(handler);

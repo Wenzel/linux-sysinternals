@@ -1,16 +1,16 @@
-#ifndef CONNECTOR_H
-#define CONNECTOR_H
+#ifndef PROCEXPHELPER_H
+#define PROCEXPHELPER_H
 
 #include <QObject>
 
-class Connector : public QObject
+class ProcexpHelper : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.proccon")
+    Q_CLASSINFO("D-Bus Interface", "com.procexp.helper")
 
 public:
-    Connector(QObject* parent = 0);
-    ~Connector();
+    ProcexpHelper(QObject* parent = 0);
+    ~ProcexpHelper();
 
 signals:
     void fork(int parent_pid, int parent_tgid, int child_pid, int child_tgid);
@@ -21,4 +21,4 @@ signals:
 
 };
 
-#endif // CONNECTOR_H
+#endif // PROCEXPHELPER_H
