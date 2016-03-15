@@ -18,6 +18,11 @@ void TreeItem::appendChild(TreeItem *item)
     item->setParent(this);
 }
 
+bool TreeItem::deleteChild(TreeItem *child)
+{
+    return m_children.removeOne(child);
+}
+
 TreeItem *TreeItem::child(int row)
 {
     return m_children.value(row);

@@ -26,8 +26,6 @@ ProcessTreeModel::~ProcessTreeModel()
 {
     if (m_root != nullptr)
         delete m_root;
-    if (m_helper != nullptr)
-        delete m_helper;
 }
 
 QVariant ProcessTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -140,15 +138,31 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
 
 void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid)
 {
-
+    ProcessInfo parent(parent_pid);
+    ProcessInfo child(child_pid);
+    // std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
 }
 
 void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 {
-
+    ProcessInfo p(process_pid);
+    std::cout << "[EXEC] " << p.exe() << std::endl;
 }
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
 {
+    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
+    QModelIndexList list = match(index(0,1), Qt::DisplayRole, process_pid, 1, Qt::MatchRecursive | Qt::MatchExactly);
+    if (list.size() == 1)
+    {
+        // found
+        std::cout << "found" << std::endl;
+        QModelIndex index = list.at(0);
+        beginRemoveRows(index.parent(), index.row(), index.row());
+        TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+        TreeItem* parent = item->parent();
+        parent->deleteChild(item);
+        endRemoveRows();
+    }
 }

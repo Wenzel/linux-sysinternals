@@ -10,7 +10,6 @@
 
 #include "treeitem.h"
 #include "sysinfo.h"
-#include "helper/ProcexpHelperInterface.h"
 
 #define HELPER_SERVICE "com.procexp.helper"
 #define HELPER_PATH "/"
@@ -36,7 +35,6 @@ private:
     TreeItem *insertProcess(int pid);
 
     // properties
-    com::procexp::helper* m_helper;
     TreeItem *m_root;
 
 private slots:

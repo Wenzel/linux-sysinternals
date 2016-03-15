@@ -1,12 +1,11 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
+#include <QCoreApplication>
 #include <iostream>
 #include <unistd.h>
 
 #include "procconnector.h"
 #include "procexphelper.h"
-#include "ProcexpHelperAdaptor.h"
-#include "ProcexpHelperInterface.h"
 
 #define HELPER_SERVICE "com.procexp.helper"
 #define HELPER_PATH "/"
@@ -22,6 +21,7 @@ void handler(struct proc_event event)
     case event.PROC_EVENT_NONE:
         break;
     case event.PROC_EVENT_FORK:
+        std::cout << "[FORK] parent " << event.event_data.fork.parent_pid << ", child " << event.event_data.fork.child_pid << std::endl;
         m = QDBusMessage::createSignal(HELPER_PATH, HELPER_SERVICE, "fork");
         m << event.event_data.fork.parent_pid;
         m << event.event_data.fork.parent_tgid;
@@ -30,6 +30,7 @@ void handler(struct proc_event event)
         bus.send(m);
         break;
     case event.PROC_EVENT_EXEC:
+        std::cout << "[EXEC] process " << event.event_data.exec.process_pid << std::endl;
         m = QDBusMessage::createSignal(HELPER_PATH, HELPER_SERVICE, "exec");
         m << event.event_data.exec.process_pid;
         m << event.event_data.exec.process_tgid;
