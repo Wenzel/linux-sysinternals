@@ -9,8 +9,7 @@ add_executable(procexp
 )
 
 target_link_libraries(procexp
-    sysinfo 
-    helper
+    sysinfo
     Qt5::Widgets
     Qt5::DBus
 )

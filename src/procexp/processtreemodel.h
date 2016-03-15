@@ -12,8 +12,8 @@
 #include "sysinfo.h"
 #include "helper/ProcexpHelperInterface.h"
 
-#define CONNECTOR_SERVICE "com.procexp.helper"
-#define CONNECTOR_PATH "/"
+#define HELPER_SERVICE "com.procexp.helper"
+#define HELPER_PATH "/"
 
 class ProcessTreeModel : public QAbstractItemModel
 {
@@ -41,6 +41,8 @@ private:
 
 private slots:
     void processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid);
+    void processExecuted(int process_pid, int process_tgid);
+    void processExited(int process_pid, int process_tgid, uint exit_code);
 };
 
 #endif // PROCESSTREEMODEL_H

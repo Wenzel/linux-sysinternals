@@ -23,23 +23,12 @@
 # qdbusxml2cpp-qt5 -a ProcexpHelperAdaptor -c ProcexpHelperAdaptor procexphelper.xml
 # qdbusxml2cpp-qt5 -c ProcexpHelperInterface -p ProcexpHelperInterface procexphelper.xml
 
-add_library(helper
-    procexphelper.cpp
-    ProcexpHelperAdaptor.cpp
-    ProcexpHelperInterface.cpp
-)
-
-target_link_libraries(helper
-    sysinfo
-    Qt5::Core
-    Qt5::DBus
-)
-
 add_executable(procexp_helper
     main.cpp
 )
 
 target_link_libraries(procexp_helper
-    helper
+    sysinfo
+    Qt5::Core
+    Qt5::DBus
 )
-

@@ -16,10 +16,10 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
         insertProcess(pid);
     }
 
-    QDBusConnection connection = QDBusConnection::sessionBus();
-
-    m_helper = new com::procexp::helper(CONNECTOR_SERVICE, CONNECTOR_PATH, connection, this);
-    connect(m_helper, SIGNAL(fork(int,int,int,int)), this, SLOT(processForked(int,int,int,int)));
+    QDBusConnection bus = QDBusConnection::systemBus();
+    bus.connect("", "", HELPER_SERVICE, "fork", this, SLOT(processForked(int,int,int,int)));
+    bus.connect("", "", HELPER_SERVICE, "exec", this, SLOT(processExecuted(int,int)));
+    bus.connect("", "", HELPER_SERVICE, "exit", this, SLOT(processExited(int,int,uint)));
 }
 
 ProcessTreeModel::~ProcessTreeModel()
@@ -140,5 +140,15 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
 
 void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid)
 {
-    std::cout << "process forked " << child_pid << std::endl;
+
+}
+
+void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
+{
+
+}
+
+void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
+{
+
 }
