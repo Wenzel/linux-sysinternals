@@ -7,6 +7,7 @@
 #include <QModelIndex>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusConnectionInterface>
+#include <QSet>
 
 #include "treeitem.h"
 #include "sysinfo.h"
@@ -36,6 +37,7 @@ private:
 
     // properties
     TreeItem *m_root;
+    QSet<int> m_set_pid;
 
 private slots:
     void processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid);
