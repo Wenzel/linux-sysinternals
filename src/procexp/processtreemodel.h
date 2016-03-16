@@ -33,6 +33,7 @@ public:
                       const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
+
 private:
     TreeItem *insertProcess(int pid);
 

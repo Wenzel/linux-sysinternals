@@ -148,56 +148,61 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
 
 void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid)
 {
-    //    ProcessInfo parent(parent_pid);
-    //    ProcessInfo child(child_pid);
-    // std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
+//    ProcessInfo parent(parent_pid);
+//    ProcessInfo child(child_pid);
+//    std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
 }
 
 void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 {
     ProcessInfo p(process_pid);
-//    std::cout << "[EXEC] " << "(" << process_pid << ") " << p.exe() << ", parent " << p.ppid() << std::endl;
-    // insert into tree
-    // find parent QModelIndex
-    QModelIndexList list = match(index(0,1), Qt::DisplayRole, p.ppid(), 1, Qt::MatchRecursive | Qt::MatchExactly);
-    if (list.size() == 1)
+    // std::cout << "[EXEC] " << "(" << process_pid << ") " << p.exe() << ", parent " << p.ppid() << std::endl;
+
+    // check is process is not already in our tree
+    if (!m_set_pid.contains(process_pid))
     {
-        QModelIndex parent_index = list.at(0);
-        // parent_index doesn't work if we use it in beginInsertRows
-        // we have to build our own QModelIndex with index()
-        parent_index = index(parent_index.row(), 0, parent_index.parent());
-        TreeItem* parent_item = static_cast<TreeItem*>(parent_index.internalPointer());
-        // find last child
-        int nb_child = rowCount(parent_index);
-        int first;
-        int last;
-        if (nb_child == 0)
+        // insert into tree
+        // find parent QModelIndex
+        QModelIndexList list = match(index(0,1), Qt::DisplayRole, p.ppid(), 1, Qt::MatchRecursive | Qt::MatchExactly);
+        if (list.size() == 1)
         {
-            first = 0;
-            last = 0;
+            QModelIndex parent_index = list.at(0);
+            // parent_index doesn't work if we use it in beginInsertRows
+            // we have to build our own QModelIndex with index()
+            parent_index = index(parent_index.row(), 0, parent_index.parent());
+            TreeItem* parent_item = static_cast<TreeItem*>(parent_index.internalPointer());
+            // find last child
+            int nb_child = rowCount(parent_index);
+            int first;
+            int last;
+            if (nb_child == 0)
+            {
+                first = 0;
+                last = 0;
+            }
+            else
+            {
+                QModelIndex last_child = parent_index.child(nb_child - 1, 0);
+                first = last_child.row();
+                last = last_child.row();
+            }
+            // start insert
+            beginInsertRows(parent_index, first, last);
+            // create new item
+            QList<QVariant> data;
+            data << TOQSTRING(p.name()) << p.pid();
+            TreeItem* new_item = new TreeItem(data);
+            // append to parent item
+            parent_item->appendChild(new_item);
+            m_set_pid.insert(process_pid);
+            endInsertRows();
         }
-        else
-        {
-            QModelIndex last_child = parent_index.child(nb_child - 1, 0);
-            first = last_child.row();
-            last = last_child.row();
-        }
-        // start insert
-        beginInsertRows(parent_index, first, last);
-        // create new item
-        QList<QVariant> data;
-        data << TOQSTRING(p.name()) << p.pid();
-        TreeItem* new_item = new TreeItem(data);
-        // append to parent item
-        parent_item->appendChild(new_item);
-        m_set_pid.insert(process_pid);
-        endInsertRows();
     }
 }
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
 {
-//    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
+//     std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
     // check if this pid is in our set
     if (m_set_pid.contains(process_pid))
@@ -205,12 +210,12 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
         QModelIndexList list = match(index(0,1), Qt::DisplayRole, process_pid, 1, Qt::MatchRecursive | Qt::MatchExactly);
         if (list.size() == 1)
         {
-            QModelIndex index = list.at(0);
-            QModelIndex index = index(index.row(), 0, index.parent());
-            beginRemoveRows(index.parent(), index.row(), index.row());
-            TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+            QModelIndex item_index = list.at(0);
+            item_index = index(item_index.row(), 0, item_index.parent());
+            beginRemoveRows(item_index.parent(), item_index.row(), item_index.row());
+            TreeItem* item = static_cast<TreeItem*>(item_index.internalPointer());
             TreeItem* parent = item->parent();
-            parent->deleteChild(item);
+            bool ret = parent->deleteChild(item);
             m_set_pid.remove(process_pid);
             endRemoveRows();
         }
