@@ -197,23 +197,23 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
 {
-//    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
+    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
-//    // check if this pid is in our set
-//    if (m_set_pid.contains(process_pid))
-//    {
-//        std::cout << "contained !" << std::endl;
-//        QModelIndexList list = match(index(0,1), Qt::DisplayRole, process_pid, 1, Qt::MatchRecursive | Qt::MatchExactly);
-//        if (list.size() == 1)
-//        {
-//            std::cout << "found in index" << std::endl;
-//            QModelIndex index = list.at(0);
-//            beginRemoveRows(index.parent(), index.row(), index.row());
-//            TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
-//            TreeItem* parent = item->parent();
-//            parent->deleteChild(item);
-//            m_set_pid.remove(process_pid);
-//            endRemoveRows();
-//        }
-//    }
+    // check if this pid is in our set
+    if (m_set_pid.contains(process_pid))
+    {
+        std::cout << "contained !" << std::endl;
+        QModelIndexList list = match(index(0,1), Qt::DisplayRole, process_pid, 1, Qt::MatchRecursive | Qt::MatchExactly);
+        if (list.size() == 1)
+        {
+            std::cout << "found in index" << std::endl;
+            QModelIndex index = list.at(0);
+            beginRemoveRows(index.parent(), index.row(), index.row());
+            TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+            TreeItem* parent = item->parent();
+            parent->deleteChild(item);
+            m_set_pid.remove(process_pid);
+            endRemoveRows();
+        }
+    }
 }
