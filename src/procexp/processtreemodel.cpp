@@ -208,6 +208,7 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
         {
             std::cout << "found in index" << std::endl;
             QModelIndex index = list.at(0);
+            QModelIndex index = index(index.row(), 0, index.parent());
             beginRemoveRows(index.parent(), index.row(), index.row());
             TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
             TreeItem* parent = item->parent();
