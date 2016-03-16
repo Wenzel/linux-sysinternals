@@ -156,7 +156,7 @@ void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_
 void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 {
     ProcessInfo p(process_pid);
-    std::cout << "[EXEC] " << "(" << process_pid << ") " << p.exe() << ", parent " << p.ppid() << std::endl;
+//    std::cout << "[EXEC] " << "(" << process_pid << ") " << p.exe() << ", parent " << p.ppid() << std::endl;
     // insert into tree
     // find parent QModelIndex
     QModelIndexList list = match(index(0,1), Qt::DisplayRole, p.ppid(), 1, Qt::MatchRecursive | Qt::MatchExactly);
@@ -197,7 +197,7 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
 {
-    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
+//    std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
     // check if this pid is in our set
     if (m_set_pid.contains(process_pid))
