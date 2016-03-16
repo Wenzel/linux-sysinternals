@@ -163,12 +163,12 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
     if (list.size() == 1)
     {
         QModelIndex parent_index = list.at(0);
-        std::cout << "parent is at " << parent_index.row() << ", " << parent_index.column() << std::endl;
+        // parent_index doesn't work if we use it in beginInsertRows
+        // we have to build our own QModelIndex with index()
+        parent_index = index(parent_index.row(), 0, parent_index.parent());
         TreeItem* parent_item = static_cast<TreeItem*>(parent_index.internalPointer());
-        std::cout << "parent is " << TOSTDSTRING(parent_item->data(0).toString()) << std::endl;
         // find last child
         int nb_child = rowCount(parent_index);
-        std::cout << "nb child " << nb_child << std::endl;
         int first;
         int last;
         if (nb_child == 0)
@@ -193,12 +193,6 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
         m_set_pid.insert(process_pid);
         endInsertRows();
     }
-    //    beginInsertRows(QModelIndex(), 0, 0);
-    //    QList<QVariant> data;
-    //    data << "newprocess" << 5000;
-    //    TreeItem* item = new TreeItem(data);
-    //    m_root->appendChild(item);
-    //    endInsertRows();
 }
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
