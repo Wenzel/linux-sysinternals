@@ -1,6 +1,7 @@
 #ifndef PROCESSTREEMODEL_H
 #define PROCESSTREEMODEL_H
 
+#include <QDebug>
 #include <QAbstractItemModel>
 #include <QString>
 #include <QVariant>
