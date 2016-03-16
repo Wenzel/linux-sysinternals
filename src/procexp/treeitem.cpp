@@ -1,3 +1,5 @@
+#include <iostream>
+#include "../convert.h"
 #include "treeitem.h"
 
 TreeItem::TreeItem(const QList<QVariant>& data, TreeItem* parent)
@@ -79,4 +81,12 @@ TreeItem* TreeItem::findPid(int pid)
 
     // not found
     return nullptr;
+}
+
+void TreeItem::display()
+{
+    // display root
+    std::cout << "node " << TOSTDSTRING(m_data[0].toString()) << " : " << m_data[1].toInt() << std::endl;
+    for (TreeItem* item : m_children)
+        item->display();
 }

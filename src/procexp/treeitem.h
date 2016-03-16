@@ -21,6 +21,7 @@ public:
     void setParent(TreeItem* item);
 
     TreeItem* findPid(int pid);
+    void display();
 
 private:
     QList<TreeItem*> m_children;
