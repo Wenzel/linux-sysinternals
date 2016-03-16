@@ -17,7 +17,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void adjustColumnSize(const QModelIndex& index);
+    void adjustColumnSize();
+    void adjustTreeView();
 
 private:
     void center();

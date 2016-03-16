@@ -16,8 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // expand all items
     ui->treeView_process->expandAll();
     ui->treeView_process->resizeColumnToContents(0);
-    connect(ui->treeView_process, SIGNAL(expanded(QModelIndex)), this, SLOT(adjustColumnSize(QModelIndex)));
-    connect(ui->treeView_process, SIGNAL(collapsed(QModelIndex)), this, SLOT(adjustColumnSize(QModelIndex)));
+    connect(ui->treeView_process, SIGNAL(expanded(QModelIndex)), this, SLOT(adjustColumnSize()));
+    connect(ui->treeView_process, SIGNAL(collapsed(QModelIndex)), this, SLOT(adjustColumnSize()));
+    connect(m_process_treemodel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(adjustTreeView()));
 }
 
 MainWindow::~MainWindow()
@@ -45,10 +46,13 @@ void MainWindow::center()
     );
 }
 
-void MainWindow::adjustColumnSize(const QModelIndex &index)
+void MainWindow::adjustColumnSize()
 {
-    if (!index.isValid())
-        return;
+    ui->treeView_process->resizeColumnToContents(0);
+}
 
+void MainWindow::adjustTreeView()
+{
+    ui->treeView_process->expandAll();
     ui->treeView_process->resizeColumnToContents(0);
 }
