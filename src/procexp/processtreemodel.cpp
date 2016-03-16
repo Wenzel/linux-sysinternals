@@ -202,11 +202,9 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
     // check if this pid is in our set
     if (m_set_pid.contains(process_pid))
     {
-        std::cout << "contained !" << std::endl;
         QModelIndexList list = match(index(0,1), Qt::DisplayRole, process_pid, 1, Qt::MatchRecursive | Qt::MatchExactly);
         if (list.size() == 1)
         {
-            std::cout << "found in index" << std::endl;
             QModelIndex index = list.at(0);
             QModelIndex index = index(index.row(), 0, index.parent());
             beginRemoveRows(index.parent(), index.row(), index.row());
