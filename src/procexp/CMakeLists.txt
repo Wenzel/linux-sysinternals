@@ -6,6 +6,7 @@ add_executable(procexp
     mainwindow.ui
     processtreemodel.cpp
     treeitem.cpp
+    processproxymodel.cpp
 )
 
 target_link_libraries(procexp

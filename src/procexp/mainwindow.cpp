@@ -11,14 +11,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     center();
 
+    // build model
     m_process_treemodel = new ProcessTreeModel(this);
-    ui->treeView_process->setModel(m_process_treemodel);
+    // build proxy
+    m_process_proxymodel = new ProcessProxyModel(this);
+    m_process_proxymodel->setFilterKeyColumn(0);
+    m_process_proxymodel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    // proxy -> model
+    m_process_proxymodel->setSourceModel(m_process_treemodel);
+    // view -> proxy
+    ui->treeView_process->setModel(m_process_proxymodel);
     // expand all items
     ui->treeView_process->expandAll();
     ui->treeView_process->resizeColumnToContents(0);
     connect(ui->treeView_process, SIGNAL(expanded(QModelIndex)), this, SLOT(adjustColumnSize()));
     connect(ui->treeView_process, SIGNAL(collapsed(QModelIndex)), this, SLOT(adjustColumnSize()));
     connect(m_process_treemodel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(adjustTreeView()));
+    connect(ui->lineEdit_search, SIGNAL(textChanged(QString)), this, SLOT(updateFilters(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -55,4 +64,9 @@ void MainWindow::adjustTreeView()
 {
     ui->treeView_process->expandAll();
     ui->treeView_process->resizeColumnToContents(0);
+}
+
+void MainWindow::updateFilters(const QString &text)
+{
+    m_process_proxymodel->setFilterRegExp(QRegExp(text));
 }

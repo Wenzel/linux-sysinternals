@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTreeView" name="treeView_process">
       <property name="editTriggers">
        <set>QAbstractItemView::NoEditTriggers</set>
@@ -29,12 +29,25 @@
       <property name="rootIsDecorated">
        <bool>true</bool>
       </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
       <attribute name="headerDefaultSectionSize">
        <number>150</number>
       </attribute>
       <attribute name="headerMinimumSectionSize">
        <number>19</number>
       </attribute>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLineEdit" name="lineEdit_search">
+      <property name="inputMask">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>Search Process</string>
+      </property>
      </widget>
     </item>
    </layout>
