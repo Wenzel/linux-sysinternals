@@ -35,16 +35,12 @@ void ProcessTreeModel::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
 
-//    beginResetModel();
     // invalidate all data
     m_root->invalidateData();
-
     // ask refresh of cpu usage column
     QModelIndex topleft = index(0, 2);
     QModelIndex bottomright = index(rowCount(), 2);
     emit dataChanged(topleft, bottomright);
-
-//    endResetModel();
 }
 
 QVariant ProcessTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
