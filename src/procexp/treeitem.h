@@ -4,10 +4,12 @@
 #include <QList>
 #include <QVariant>
 
+#include "processinfo.h"
+
 class TreeItem
 {
 public:
-    explicit TreeItem(const QList<QVariant>& data, TreeItem* parent = nullptr);
+    explicit TreeItem(ProcessInfo *pinfo, TreeItem* parent = nullptr);
     ~TreeItem();
 
     void appendChild(TreeItem* child);
@@ -15,17 +17,18 @@ public:
     TreeItem* child(int row);
     int childCount() const;
     int columnCount() const;
-    QVariant data(int column) const;
+    QVariant data(int column);
     int row() const;
     TreeItem *parent();
     void setParent(TreeItem* item);
 
     TreeItem* findPid(int pid);
+    void invalidateData();
     void display();
 
 private:
     QList<TreeItem*> m_children;
-    QList<QVariant> m_data;
+    ProcessInfo* m_pinfo;
     TreeItem *m_parent;
 };
 

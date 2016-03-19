@@ -69,4 +69,5 @@ void MainWindow::adjustTreeView()
 void MainWindow::updateFilters(const QString &text)
 {
     m_process_proxymodel->setFilterRegExp(QRegExp(text));
+    ui->treeView_process->expandAll();
 }

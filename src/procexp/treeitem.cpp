@@ -2,8 +2,8 @@
 #include "../convert.h"
 #include "treeitem.h"
 
-TreeItem::TreeItem(const QList<QVariant>& data, TreeItem* parent)
-    : m_data(data),
+TreeItem::TreeItem(ProcessInfo* pinfo, TreeItem* parent)
+    : m_pinfo(pinfo),
       m_parent(parent)
 {
 
@@ -12,6 +12,8 @@ TreeItem::TreeItem(const QList<QVariant>& data, TreeItem* parent)
 TreeItem::~TreeItem()
 {
     qDeleteAll(m_children);
+    if (m_pinfo != nullptr)
+        delete m_pinfo;
 }
 
 void TreeItem::appendChild(TreeItem *item)
@@ -45,12 +47,22 @@ int TreeItem::row() const
 
 int TreeItem::columnCount() const
 {
-    return m_data.count();
+    return 3;
 }
 
-QVariant TreeItem::data(int column) const
+QVariant TreeItem::data(int column)
 {
-    return m_data.value(column);
+    switch (column)
+    {
+    case 0: // name
+        return TOQSTRING(m_pinfo->name());
+    case 1:
+        return m_pinfo->pid();
+    case 2:
+        return m_pinfo->cpuUsage();
+    default:
+        return "";
+    }
 }
 
 TreeItem *TreeItem::parent()
@@ -65,9 +77,7 @@ void TreeItem::setParent(TreeItem *item)
 
 TreeItem* TreeItem::findPid(int pid)
 {
-    // pid is stored in m_data[1]
-    int cur_pid = m_data[1].toInt();
-    if (cur_pid == pid)
+    if (m_parent != nullptr && m_pinfo->pid() == pid)
         return this;
     // find in children
     for (TreeItem* item : m_children)
@@ -83,10 +93,20 @@ TreeItem* TreeItem::findPid(int pid)
     return nullptr;
 }
 
+void TreeItem::invalidateData()
+{
+    // invalidate current node
+    if (m_parent != nullptr)
+        m_pinfo->needUpdate();
+    // invalidate children
+    for (TreeItem* item : m_children)
+        item->invalidateData();
+}
+
 void TreeItem::display()
 {
     // display root
-    std::cout << "node " << TOSTDSTRING(m_data[0].toString()) << " : " << m_data[1].toInt() << std::endl;
+    std::cout << "node " << m_pinfo->name() << " : " << m_pinfo->pid() << std::endl;
     for (TreeItem* item : m_children)
         item->display();
 }

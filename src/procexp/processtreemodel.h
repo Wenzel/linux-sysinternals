@@ -36,8 +36,11 @@ public:
 
 private:
     TreeItem *insertProcess(int pid);
+    void timerEvent(QTimerEvent *event);
 
     // properties
+    int m_timer_id;
+    QList<QVariant> m_headers;
     TreeItem *m_root;
     QSet<int> m_set_pid;
 

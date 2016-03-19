@@ -4,10 +4,9 @@
 ProcessTreeModel::ProcessTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    QList<QVariant> headers;
-    headers << "Process" << "PID";
+    m_headers << "Process" << "PID" << "% CPU";
     // create root item
-    m_root = new TreeItem(headers);
+    m_root = new TreeItem(nullptr);
 
     std::vector<int> pids = processListPid();
 
@@ -21,6 +20,9 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
     bus.connect("", "", HELPER_SERVICE, "fork", this, SLOT(processForked(int,int,int,int)));
     bus.connect("", "", HELPER_SERVICE, "exec", this, SLOT(processExecuted(int,int)));
     bus.connect("", "", HELPER_SERVICE, "exit", this, SLOT(processExited(int,int,uint)));
+
+    // start timer to refresh data
+    m_timer_id = startTimer(1000);
 }
 
 ProcessTreeModel::~ProcessTreeModel()
@@ -29,10 +31,26 @@ ProcessTreeModel::~ProcessTreeModel()
         delete m_root;
 }
 
+void ProcessTreeModel::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event);
+
+//    beginResetModel();
+    // invalidate all data
+    m_root->invalidateData();
+
+    // ask refresh of cpu usage column
+    QModelIndex topleft = index(0, 2);
+    QModelIndex bottomright = index(rowCount(), 2);
+    emit dataChanged(topleft, bottomright);
+
+//    endResetModel();
+}
+
 QVariant ProcessTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return m_root->data(section);
+        return m_headers[section];
 
     return QVariant();
 }
@@ -109,8 +127,14 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
 
     if (role == Qt::DisplayRole)
-        return item->data(index.column());
+    {
+        QVariant data = item->data(index.column());
 
+        if (index.column() == 2 && data.toInt() == 0)
+            data = "";
+
+        return data;
+    }
     return QVariant();
 }
 
@@ -120,9 +144,9 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
     if (m_root->findPid(pid) != nullptr)
         return nullptr;
 
-    ProcessInfo pinfo = ProcessInfo(pid);
+    ProcessInfo* pinfo = new ProcessInfo(pid);
     // look for parent in our tree
-    int ppid = pinfo.ppid();
+    int ppid = pinfo->ppid();
 
     // find parent
     TreeItem* parent;
@@ -139,15 +163,17 @@ TreeItem* ProcessTreeModel::insertProcess(int pid)
         }
     }
     // insert as child
-    QList<QVariant> data;
-    data << TOQSTRING(pinfo.name()) << pinfo.pid();
-    TreeItem* item = new TreeItem(data);
+    TreeItem* item = new TreeItem(pinfo);
     parent->appendChild(item);
     return item;
 }
 
 void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_pid, int child_tgid)
 {
+    Q_UNUSED(parent_pid);
+    Q_UNUSED(parent_tgid);
+    Q_UNUSED(child_pid);
+    Q_UNUSED(child_tgid);
 //    ProcessInfo parent(parent_pid);
 //    ProcessInfo child(child_pid);
 //    std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
@@ -155,7 +181,8 @@ void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_
 
 void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 {
-    ProcessInfo p(process_pid);
+    Q_UNUSED(process_tgid);
+    ProcessInfo* pinfo = new ProcessInfo(process_pid);
     // std::cout << "[EXEC] " << "(" << process_pid << ") " << p.exe() << ", parent " << p.ppid() << std::endl;
 
     // check is process is not already in our tree
@@ -163,7 +190,7 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
     {
         // insert into tree
         // find parent QModelIndex
-        QModelIndexList list = match(index(0,1), Qt::DisplayRole, p.ppid(), 1, Qt::MatchRecursive | Qt::MatchExactly);
+        QModelIndexList list = match(index(0,1), Qt::DisplayRole, pinfo->ppid(), 1, Qt::MatchRecursive | Qt::MatchExactly);
         if (list.size() == 1)
         {
             QModelIndex parent_index = list.at(0);
@@ -189,9 +216,7 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
             // start insert
             beginInsertRows(parent_index, first, last);
             // create new item
-            QList<QVariant> data;
-            data << TOQSTRING(p.name()) << p.pid();
-            TreeItem* new_item = new TreeItem(data);
+            TreeItem* new_item = new TreeItem(pinfo);
             // append to parent item
             parent_item->appendChild(new_item);
             m_set_pid.insert(process_pid);
@@ -202,6 +227,8 @@ void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
 
 void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exit_code)
 {
+    Q_UNUSED(process_tgid);
+    Q_UNUSED(exit_code);
 //     std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
     // check if this pid is in our set
@@ -215,7 +242,7 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
             beginRemoveRows(item_index.parent(), item_index.row(), item_index.row());
             TreeItem* item = static_cast<TreeItem*>(item_index.internalPointer());
             TreeItem* parent = item->parent();
-            bool ret = parent->deleteChild(item);
+            parent->deleteChild(item);
             m_set_pid.remove(process_pid);
             endRemoveRows();
         }
