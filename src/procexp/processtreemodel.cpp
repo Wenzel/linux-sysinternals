@@ -6,7 +6,7 @@
 ProcessTreeModel::ProcessTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    m_headers << "Process" << "PID" << "% CPU" << "IO";
+    m_headers << "Process" << "PID" << "CPU" << "IO";
     // create root item
     m_root = new TreeItem(nullptr);
 
@@ -124,26 +124,32 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-
+    ProcessInfo* pinfo = item->pinfo();
     if (role == Qt::DisplayRole)
     {
-        QVariant data = item->data(index.column());
-
-        if (index.column() == 2 || index.column() == 3)
-            if (data.toInt() == 0)
-                data = "";
-        if (index.column() == 3)
+        double value = 0;
+        QPair<QString, double> pair;
+        switch (index.column())
         {
-            double value = data.toDouble();
+        case 0: // name
+            return TOQSTRING(pinfo->name());
+        case 1: // pid
+            return pinfo->pid();
+        case 2: // CPU usage
+            value = pinfo->cpuUsage();
             if (value)
-            {
-                QString str_value = humanUnit(value);
-                data = str_value;
-            }
+                return QString::number(value) + "" + "%";
+            break;
+        case 3: // total IO usage
+            value = pinfo->ioTotalUsage();
+            pair = humanUnit(value);
+            if (pair.second)
+                return pair.first + "/s";
+            break;
+        default:
+            return "";
         }
-
-
-        return data;
+        return ""; // return an empty to avoid columns filled with 0
     }
     return QVariant();
 }
@@ -259,17 +265,22 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
     }
 }
 
-QString ProcessTreeModel::humanUnit(double value) const
+QPair<QString, double> ProcessTreeModel::humanUnit(double value) const
 {
     QStringList units;
-    units << "B/s" << "KB/s" << "MB/s" << "GB/s";
+    units << "B" << "KB" << "MB" << "GB";
     int i = 0;
     while (value / 1024 >= 1)
     {
         value = value / 1024;
         i++;
+        if (i > units.size())
+            break;
     }
     double rounded = std::round(value * 10) / 10;
     QString str_value = QString::number(rounded) + " " + units.at(i);
-    return str_value;
+    QPair<QString, double> pair;
+    pair.first = str_value;
+    pair.second = rounded;
+    return pair;
 }

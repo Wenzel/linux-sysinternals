@@ -37,7 +37,7 @@ public:
 private:
     TreeItem *insertProcess(int pid);
     void timerEvent(QTimerEvent *event);
-    QString humanUnit(double value) const;
+    QPair<QString, double> humanUnit(double value) const;
 
     // properties
     int m_timer_id;

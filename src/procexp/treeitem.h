@@ -17,7 +17,6 @@ public:
     TreeItem* child(int row);
     int childCount() const;
     int columnCount() const;
-    QVariant data(int column);
     int row() const;
     TreeItem *parent();
     void setParent(TreeItem* item);
@@ -25,6 +24,7 @@ public:
     TreeItem* findPid(int pid);
     void invalidateData();
     void display();
+    ProcessInfo* pinfo();
 
 private:
     QList<TreeItem*> m_children;

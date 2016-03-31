@@ -50,23 +50,6 @@ int TreeItem::columnCount() const
     return 4;
 }
 
-QVariant TreeItem::data(int column)
-{
-    switch (column)
-    {
-    case 0: // name
-        return TOQSTRING(m_pinfo->name());
-    case 1:
-        return m_pinfo->pid();
-    case 2:
-        return m_pinfo->cpuUsage();
-    case 3:
-        return m_pinfo->ioTotalUsage();
-    default:
-        return "";
-    }
-}
-
 TreeItem *TreeItem::parent()
 {
     return m_parent;
@@ -111,4 +94,9 @@ void TreeItem::display()
     std::cout << "node " << m_pinfo->name() << " : " << m_pinfo->pid() << std::endl;
     for (TreeItem* item : m_children)
         item->display();
+}
+
+ProcessInfo* TreeItem::pinfo()
+{
+    return m_pinfo;
 }
