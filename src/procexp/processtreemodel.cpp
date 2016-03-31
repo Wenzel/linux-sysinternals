@@ -6,7 +6,7 @@
 ProcessTreeModel::ProcessTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    m_headers << "Process" << "PID" << "% CPU" << "IO B/s";
+    m_headers << "Process" << "PID" << "% CPU" << "IO";
     // create root item
     m_root = new TreeItem(nullptr);
 
@@ -129,13 +129,19 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
     {
         QVariant data = item->data(index.column());
 
-//        if (index.column() == 0)
-//            std::cout << TOSTDSTRING(data.toString()) << std::endl;
-//        if (index.column() == 3)
-//            std::cout << data.toDouble() << std::endl;
         if (index.column() == 2 || index.column() == 3)
             if (data.toInt() == 0)
                 data = "";
+        if (index.column() == 3)
+        {
+            double value = data.toDouble();
+            if (value)
+            {
+                QString str_value = humanUnit(value);
+                data = str_value;
+            }
+        }
+
 
         return data;
     }
@@ -251,4 +257,18 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
             endRemoveRows();
         }
     }
+}
+
+QString ProcessTreeModel::humanUnit(double value) const
+{
+    QStringList units;
+    units << "B/s" << "KB/s" << "MB/s" << "GB/s";
+    int i = 0;
+    while (value / 1024 >= 1)
+    {
+        value = value / 1024;
+        i++;
+    }
+    QString str_value = QString::number(value) + " " + units.at(i);
+    return str_value;
 }
