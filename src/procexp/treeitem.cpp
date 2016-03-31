@@ -47,7 +47,7 @@ int TreeItem::row() const
 
 int TreeItem::columnCount() const
 {
-    return 3;
+    return 4;
 }
 
 QVariant TreeItem::data(int column)
@@ -60,6 +60,8 @@ QVariant TreeItem::data(int column)
         return m_pinfo->pid();
     case 2:
         return m_pinfo->cpuUsage();
+    case 3:
+        return m_pinfo->ioTotalUsage();
     default:
         return "";
     }

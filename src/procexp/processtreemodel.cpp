@@ -1,10 +1,12 @@
+#include <QStack>
+
 #include "processtreemodel.h"
 #include "../convert.h"
 
 ProcessTreeModel::ProcessTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    m_headers << "Process" << "PID" << "% CPU";
+    m_headers << "Process" << "PID" << "% CPU" << "IO B/s";
     // create root item
     m_root = new TreeItem(nullptr);
 
@@ -22,7 +24,7 @@ ProcessTreeModel::ProcessTreeModel(QObject* parent)
     bus.connect("", "", HELPER_SERVICE, "exit", this, SLOT(processExited(int,int,uint)));
 
     // start timer to refresh data
-    m_timer_id = startTimer(1000);
+    m_timer_id = startTimer(2000);
 }
 
 ProcessTreeModel::~ProcessTreeModel()
@@ -37,10 +39,11 @@ void ProcessTreeModel::timerEvent(QTimerEvent *event)
 
     // invalidate all data
     m_root->invalidateData();
-    // ask refresh of cpu usage column
+
     QModelIndex topleft = index(0, 2);
-    QModelIndex bottomright = index(rowCount(), 2);
+    QModelIndex bottomright = index(rowCount() - 1, columnCount() - 1);
     emit dataChanged(topleft, bottomright);
+
 }
 
 QVariant ProcessTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -126,8 +129,13 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
     {
         QVariant data = item->data(index.column());
 
-        if (index.column() == 2 && data.toInt() == 0)
-            data = "";
+//        if (index.column() == 0)
+//            std::cout << TOSTDSTRING(data.toString()) << std::endl;
+//        if (index.column() == 3)
+//            std::cout << data.toDouble() << std::endl;
+        if (index.column() == 2 || index.column() == 3)
+            if (data.toInt() == 0)
+                data = "";
 
         return data;
     }
@@ -170,9 +178,9 @@ void ProcessTreeModel::processForked(int parent_pid, int parent_tgid, int child_
     Q_UNUSED(parent_tgid);
     Q_UNUSED(child_pid);
     Q_UNUSED(child_tgid);
-//    ProcessInfo parent(parent_pid);
-//    ProcessInfo child(child_pid);
-//    std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
+    //    ProcessInfo parent(parent_pid);
+    //    ProcessInfo child(child_pid);
+    //    std::cout << "[FORK] " << "(" << parent_pid << ") " << parent.exe() << " -> " <<"(" << child_pid << ") " << child.exe() << std::endl;
 }
 
 void ProcessTreeModel::processExecuted(int process_pid, int process_tgid)
@@ -225,7 +233,7 @@ void ProcessTreeModel::processExited(int process_pid, int process_tgid, uint exi
 {
     Q_UNUSED(process_tgid);
     Q_UNUSED(exit_code);
-//     std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
+    //     std::cout << "[EXIT] " << process_pid << " -> " << exit_code << std::endl;
 
     // check if this pid is in our set
     if (m_set_pid.contains(process_pid))
