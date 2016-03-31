@@ -269,6 +269,7 @@ QString ProcessTreeModel::humanUnit(double value) const
         value = value / 1024;
         i++;
     }
-    QString str_value = QString::number(value) + " " + units.at(i);
+    double rounded = std::round(value * 10) / 10;
+    QString str_value = QString::number(rounded) + " " + units.at(i);
     return str_value;
 }
