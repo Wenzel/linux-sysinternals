@@ -6,7 +6,7 @@
 ProcessTreeModel::ProcessTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    m_headers << "Process" << "PID" << "CPU" << "IO";
+    m_headers << "Process" << "PID" << "CPU" << "Memory" << "Disk IO";
     // create root item
     m_root = new TreeItem(nullptr);
 
@@ -140,7 +140,13 @@ QVariant ProcessTreeModel::data(const QModelIndex &index, int role) const
             if (value)
                 return QString::number(value) + "" + "%";
             break;
-        case 3: // total IO usage
+        case 3:
+            value = pinfo->vmSize();
+            pair = humanUnit(value);
+            if (pair.second)
+                return pair.first;
+            break;
+        case 4: // total IO usage
             value = pinfo->ioTotalUsage();
             pair = humanUnit(value);
             if (pair.second)

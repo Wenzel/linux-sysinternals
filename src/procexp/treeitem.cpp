@@ -47,7 +47,7 @@ int TreeItem::row() const
 
 int TreeItem::columnCount() const
 {
-    return 4;
+    return 5;
 }
 
 TreeItem *TreeItem::parent()
